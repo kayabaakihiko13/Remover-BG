@@ -1,0 +1,9 @@
+/* Footer Specific Styles */
+footer {
+    margin-top: auto;
+}
+
+footer a:hover {
+    color: #6366f1 !important;
+    transition: all 0.3s;
+}

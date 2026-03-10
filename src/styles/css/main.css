@@ -1,0 +1,121 @@
+:root {
+    --primary-color: #6366f1;
+    --secondary-color: #8b5cf6;
+    --accent-color: #ec4899;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Main content area - INI YANG KURANG! */
+main {
+    flex: 1;
+    padding-top: 3rem;
+    padding-bottom: 3rem;
+    min-height: calc(100vh - 200px);
+}
+
+/* Spacer untuk navbar fixed */
+.navbar-spacer {
+    height: 76px;
+    display: block;
+}
+
+/* Navbar styles */
+.navbar {
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+}
+
+.navbar-brand {
+    font-weight: 700;
+    font-size: 1.5rem;
+    background: linear-gradient(135deg, var(--primary-color), var(--accent-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.nav-link {
+    font-weight: 500;
+    color: #4b5563 !important;
+    transition: all 0.3s;
+}
+
+.nav-link:hover,
+.nav-link.active {
+    color: var(--primary-color) !important;
+    transform: translateY(-2px);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    border: none;
+    font-weight: 600;
+    padding: 8px 24px;
+    transition: all 0.3s;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(99, 102, 241, 0.4);
+}
+
+/* Drop zone styles */
+.drop-zone {
+    border: 3px dashed rgba(255, 255, 255, 0.5);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.1));
+    cursor: pointer;
+    transition: all 0.3s;
+    border-radius: 1rem;
+}
+
+.drop-zone:hover {
+    border-color: white;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.15));
+    transform: scale(1.02);
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+}
+
+.drop-zone i {
+    color: white;
+    opacity: 0.9;
+}
+
+/* Checkered background untuk preview transparan */
+.checkered-bg {
+    background-image:
+        linear-gradient(45deg, #ccc 25%, transparent 25%),
+        linear-gradient(-45deg, #ccc 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #ccc 75%),
+        linear-gradient(-45deg, transparent 75%, #ccc 75%);
+    background-size: 20px 20px;
+    background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+}
+
+/* Container spacing */
+.container.py-5 {
+    padding-top: 3rem !important;
+    padding-bottom: 3rem !important;
+}
+
+/* Card styles */
+.card {
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+/* Text colors */
+.text-white {
+    color: white !important;
+}
+
+/* Feature icons */
+.bg-white.bg-opacity-25 {
+    background-color: rgba(255, 255, 255, 0.25) !important;
+}
