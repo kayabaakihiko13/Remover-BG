@@ -1,0 +1,12 @@
+/* Header Specific Styles */
+.navbar {
+    background: rgba(255, 255, 255, 0.95) !important;
+    backdrop-filter: blur(10px);
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+}
+
+.nav-link {
+    font-weight: 500;
+    color: #4b5563 !important;
+    transition: all 0.3s;
+}
