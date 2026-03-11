@@ -72,39 +72,27 @@
             </div>
         </div>
     </div>
+    <!-- error alert box -->
+    {% if error %}
+    <div class="row justify-content-center mb-4">
+        <div class="col-lg-8">
+            <div class="alert alert-danger alert-dismissible fade show shadow-lg border-0" role="alert"
+                style="border-radius: 15px; background: linear-gradient(135deg, #ff6b6b 0%, #ee5a5a 100%); color: white;">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-exclamation-circle fa-2x me-3"></i>
+                    <div>
+                        <h5 class="alert-heading mb-1 fw-bold">⚠️ Upload Gagal</h5>
+                        <p class="mb-0">{{ error }}</p>
+                    </div>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"
+                    aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
 </div>
 
-<script>
-    const dropZone = document.getElementById('dropZone');
-    const fileInput = document.getElementById('fileInput');
-    const uploadForm = document.getElementById('uploadForm');
-
-    // Drag and drop
-    dropZone.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        dropZone.style.borderColor = 'white';
-    });
-
-    dropZone.addEventListener('dragleave', (e) => {
-        e.preventDefault();
-        dropZone.style.borderColor = 'rgba(255, 255, 255, 0.5)';
-    });
-
-    dropZone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        dropZone.style.borderColor = 'rgba(255, 255, 255, 0.5)';
-        const files = e.dataTransfer.files;
-        if (files.length) {
-            fileInput.files = files;
-            uploadForm.submit(); // ✅ Langsung submit dan redirect
-        }
-    });
-
-    // File input change
-    fileInput.addEventListener('change', (e) => {
-        if (e.target.files.length) {
-            uploadForm.submit(); // ✅ Submit form dan redirect ke /upload
-        }
-    });
-</script>
+<script src="../styles/js/main.js"></script>
 {% endblock %}

@@ -1,0 +1,36 @@
+{% extends 'view/base.html' %}
+
+{% block title %}403 - Akses Ditolak{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 text-center">
+            <div class="mb-4">
+                <i class="fas fa-lock fa-5x text-danger" style="font-size: 8rem;"></i>
+            </div>
+
+            <h1 class="display-1 fw-bold text-white mb-3">403</h1>
+            <h2 class="h3 text-white mb-4">Akses Ditolak</h2>
+
+            <p class="lead text-white-50 mb-5">
+                Kamu tidak memiliki izin untuk mengakses halaman ini.
+            </p>
+
+            <div class="d-grid gap-2 d-md-flex justify-content-md-center">
+                <a href="{{ url_for('home') }}" class="btn btn-primary btn-lg px-4">
+                    <i class="fas fa-home me-2"></i>Kembali ke Beranda
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .display-1 {
+        font-size: 8rem;
+        font-weight: 900;
+        text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.3);
+    }
+</style>
+{% endblock %}

@@ -9,8 +9,7 @@ from flask import (
     render_template,
     request,
     jsonify,
-    send_from_directory,
-    send_file
+    send_from_directory
 )
 from flask_cors import CORS
 from PIL import Image
@@ -18,10 +17,7 @@ from rembg import remove, new_session
 
 from config.directory_project import UPLOAD_DIR, MODEL_DIR
 
-# ==============================================================================
-# KONFIGURASI APLIKASI
-# ==============================================================================
-
+# Configuration Application
 sys.path.append(str(Path(__file__).parent.parent))
 
 app = Flask(
@@ -41,9 +37,6 @@ BG_SESSION = new_session("u2netp")
 app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024
 app.config['UPLOAD_FOLDER'] = str(UPLOAD_DIR)
 
-# ==============================================================================
-# ROUTES
-# ==============================================================================
 
 @app.route('/')
 def home():
@@ -122,25 +115,36 @@ def serve_static(filename):
     """Serve file statis dari folder styles"""
     return send_from_directory(app.static_folder, filename)
 
-# ==============================================================================
-# ERROR HANDLERS
-# ==============================================================================
-
+# == Error Handler
 @app.errorhandler(404)
 def not_found(error):
-    return jsonify({'error': 'Resource not found'}), 404
-
+    """Handle 404 Not Found"""
+    return render_template('view/error_handling/404.html'), 404
 @app.errorhandler(500)
 def internal_error(error):
-    return jsonify({'error': 'Internal server error'}), 500
+    # Cek apakah request dari browser (HTML) atau API (JSON)
+    if request.accept_mimetypes.accept_json and not request.accept_mimetypes.accept_html:
+        return jsonify({'error': 'Internal server error'}), 500
+    else:
+        return render_template('view/error_handling/500.html'), 500
 
 @app.errorhandler(413)
 def too_large(error):
-    return jsonify({'error': 'File terlalu besar. Maksimal 10MB'}), 413
+    """
+    Handle error file terlalu besar
+    Render index.html dengan error message di alert box
+    """
+    # Return index.html dengan parameter error
+    return render_template('index.html', 
+                          error='File terlalu besar! Maksimal ukuran file adalah 10MB.'), 413
 
-# ==============================================================================
-# MAIN EXECUTION
-# ==============================================================================
-
+# Optional: Error handler untuk 403 (Forbidden)
+@app.errorhandler(403)
+def forbidden(error):
+    if request.accept_mimetypes.accept_json and not request.accept_mimetypes.accept_html:
+        return jsonify({'error': 'Access forbidden'}), 403
+    else:
+        return render_template('view/error_handling/403.html'), 403  # Buat file 403.html jika perlu
+#  Servere Execute
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)
