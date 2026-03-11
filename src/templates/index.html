@@ -18,136 +18,81 @@
         </div>
     </div>
 
-    <!-- Upload Area -->
-    <div class="text-center mb-4">
-        <div id="dropZone" class="drop-zone rounded-4 p-5">
-            <i class="fas fa-cloud-upload-alt fa-4x mb-3" style="color: #6366f1;"></i>
-            <h4 class="mb-2">Drop gambar di sini atau klik untuk upload</h4>
-            <p class="text-muted mb-3">Support: JPG, PNG, WEBP (Max 10MB)</p>
-            <input type="file" id="fileInput" accept="image/*" style="display: none;">
-            <button class="btn btn-primary btn-lg" onclick="document.getElementById('fileInput').click()">
-                <i class="fas fa-folder-open me-2"></i>Pilih File
-            </button>
-        </div>
-    </div>
-
-    <!-- Preview Section -->
-    <div id="previewSection" class="row mt-4" style="display: none;">
-        <div class="col-md-6 mb-3">
-            <h5 class="fw-bold mb-3"><i class="fas fa-image me-2"></i>Original</h5>
-            <div class="card border">
-                <div class="card-body text-center p-3">
-                    <img id="originalPreview" class="img-fluid rounded" style="max-height: 400px;">
+    <!-- Upload Section dengan FORM -->
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card border-0 shadow-lg" style="border-radius: 20px;">
+                <div class="card-body p-5">
+                    <form action="/upload" method="POST" enctype="multipart/form-data" id="uploadForm">
+                        <div class="text-center mb-4">
+                            <div id="dropZone" class="drop-zone rounded-4 p-5">
+                                <i class="fas fa-cloud-upload-alt fa-4x mb-3" style="color: white;"></i>
+                                <h4 class="mb-2 text-white">Drop gambar di sini atau klik untuk upload</h4>
+                                <p class="text-white-50 mb-3">Support: JPG, PNG, WEBP (Max 10MB)</p>
+                                <input type="file" name="file" id="fileInput" accept="image/*" style="display: none;">
+                                <button type="button" class="btn btn-primary btn-lg"
+                                    onclick="document.getElementById('fileInput').click()">
+                                    <i class="fas fa-folder-open me-2"></i>Pilih File
+                                </button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
-        </div>
-        <div class="col-md-6 mb-3">
-            <h5 class="fw-bold mb-3"><i class="fas fa-magic me-2"></i>Hasil (Tanpa Background)</h5>
-            <div class="card border">
-                <div class="card-body text-center p-3 checkered-bg">
-                    <img id="resultPreview" class="img-fluid rounded" style="max-height: 400px; display: none;">
-                    <div id="loadingSpinner" class="d-none">
-                        <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
-                            <span class="visually-hidden">Loading...</span>
+
+            <!-- Features -->
+            <div class="row mt-5 g-4">
+                <div class="col-md-4">
+                    <div class="text-center text-white">
+                        <div class="bg-white bg-opacity-25 rounded-circle p-4 d-inline-block mb-3">
+                            <i class="fas fa-bolt fa-3x"></i>
                         </div>
-                        <p class="mt-3 text-muted">Sedang memproses...</p>
+                        <h5>Cepat & Otomatis</h5>
+                        <p class="small">Proses hanya dalam hitungan detik dengan teknologi AI canggih</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="text-center text-white">
+                        <div class="bg-white bg-opacity-25 rounded-circle p-4 d-inline-block mb-3">
+                            <i class="fas fa-check-circle fa-3x"></i>
+                        </div>
+                        <h5>Hasil Berkualitas</h5>
+                        <p class="small">Hasil yang presisi dan rapi untuk kebutuhan profesional Anda</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="text-center text-white">
+                        <div class="bg-white bg-opacity-25 rounded-circle p-4 d-inline-block mb-3">
+                            <i class="fas fa-gift fa-3x"></i>
+                        </div>
+                        <h5>100% Gratis</h5>
+                        <p class="small">Gunakan sepuasnya tanpa biaya dan tanpa watermark</p>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <!-- error alert box -->
+    {% if error %}
+    <div class="row justify-content-center mb-4">
+        <div class="col-lg-8">
+            <div class="alert alert-danger alert-dismissible fade show shadow-lg border-0" role="alert"
+                style="border-radius: 15px; background: linear-gradient(135deg, #ff6b6b 0%, #ee5a5a 100%); color: white;">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-exclamation-circle fa-2x me-3"></i>
+                    <div>
+                        <h5 class="alert-heading mb-1 fw-bold">⚠️ Upload Gagal</h5>
+                        <p class="mb-0">{{ error }}</p>
+                    </div>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"
+                    aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
 </div>
 
-<script>
-    const dropZone = document.getElementById('dropZone');
-    const fileInput = document.getElementById('fileInput');
-    const previewSection = document.getElementById('previewSection');
-    const actionButtons = document.getElementById('actionButtons');
-    const originalPreview = document.getElementById('originalPreview');
-    const resultPreview = document.getElementById('resultPreview');
-    const loadingSpinner = document.getElementById('loadingSpinner');
-    const downloadBtn = document.getElementById('downloadBtn');
-
-    // Drag and drop events
-    dropZone.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        dropZone.style.borderColor = '#ec4899';
-        dropZone.style.transform = 'scale(1.02)';
-    });
-
-    dropZone.addEventListener('dragleave', (e) => {
-        e.preventDefault();
-        dropZone.style.borderColor = '#6366f1';
-        dropZone.style.transform = 'scale(1)';
-    });
-
-    dropZone.addEventListener('drop', (e) => {
-        e.preventDefault();
-        dropZone.style.borderColor = '#6366f1';
-        dropZone.style.transform = 'scale(1)';
-        const files = e.dataTransfer.files;
-        if (files.length) handleFile(files[0]);
-    });
-
-    fileInput.addEventListener('change', (e) => {
-        if (e.target.files.length) handleFile(e.target.files[0]);
-    });
-
-    function handleFile(file) {
-        if (!file.type.startsWith('image/')) {
-            alert('Mohon upload file gambar!');
-            return;
-        }
-
-        if (file.size > 10 * 1024 * 1024) {
-            alert('Ukuran file terlalu besar! Maksimal 10MB');
-            return;
-        }
-
-        const reader = new FileReader();
-        reader.onload = (e) => {
-            originalPreview.src = e.target.result;
-            previewSection.style.display = 'flex';
-            processImage(file);
-        };
-        reader.readAsDataURL(file);
-    }
-
-    async function processImage(file) {
-        loadingSpinner.classList.remove('d-none');
-        resultPreview.style.display = 'none';
-        actionButtons.style.display = 'none';
-
-        const formData = new FormData();
-        formData.append('file', file);
-
-        try {
-            const response = await fetch('/upload', {
-                method: 'POST',
-                body: formData
-            });
-
-            if (response.ok) {
-                const blob = await response.blob();
-                const url = URL.createObjectURL(blob);
-                resultPreview.src = url;
-                resultPreview.style.display = 'block';
-                actionButtons.style.display = 'block';
-
-                downloadBtn.onclick = () => {
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = 'no-bg-' + file.name;
-                    a.click();
-                };
-            } else {
-                alert('Terjadi kesalahan saat memproses gambar');
-            }
-        } catch (error) {
-            alert('Error: ' + error.message);
-        } finally {
-            loadingSpinner.classList.add('d-none');
-        }
-    }
-</script>
+<script src="../styles/js/main.js"></script>
 {% endblock %}
