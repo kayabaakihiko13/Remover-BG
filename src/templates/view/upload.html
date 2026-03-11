@@ -1,0 +1,121 @@
+{% extends 'view/base.html' %}
+
+{% block title %}Upload - Remover-BG{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    {% if success %}
+    <!-- HASIL PROCESSING -->
+    <div class="row justify-content-center">
+        <div class="col-lg-12 text-center text-white mb-4">
+            <h1 class="display-5 fw-bold mb-3">
+                <i class="fas fa-check-circle me-2"></i>Background Berhasil Dihapus!
+            </h1>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-md-6 mb-3">
+                <h5 class="fw-bold mb-3 text-white"><i class="fas fa-image me-2"></i>Original</h5>
+                <div class="card border-0 shadow">
+                    <div class="card-body text-center p-3 bg-white rounded">
+                        <img src="/uploads/{{ original_file }}" class="img-fluid rounded" style="max-height: 400px;">
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 mb-3">
+                <h5 class="fw-bold mb-3 text-white"><i class="fas fa-magic me-2"></i>Hasil (Tanpa Background)</h5>
+                <div class="card border-0 shadow">
+                    <div class="card-body text-center p-3 checkered-bg rounded">
+                        <img src="data:{{ processed_file }}" class="img-fluid rounded" style="max-height: 400px;">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-4">
+            <a href="{{ url_for('home') }}" class="btn btn-outline-light btn-lg">
+                <i class="fas fa-redo me-2"></i>Upload Ulang
+            </a>
+        </div>
+    </div>
+
+    {% else %}
+    <!-- FORM UPLOAD -->
+    <div class="row justify-content-center">
+        <div class="col-lg-8 text-center text-white mb-4">
+            <h1 class="display-4 fw-bold mb-3">
+                <i class="fas fa-cloud-upload-alt me-2"></i>Upload Gambar
+            </h1>
+            <p class="lead">Pilih gambar untuk menghapus background secara otomatis</p>
+        </div>
+
+        <div class="col-lg-6">
+            <div class="card border-0 shadow-lg" style="border-radius: 20px;">
+                <div class="card-body p-5">
+                    <form action="/upload" method="POST" enctype="multipart/form-data" id="uploadForm">
+                        <div class="text-center mb-4">
+                            <div id="dropZone" class="drop-zone rounded-4 p-5"
+                                style="min-height: 300px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                                <i class="fas fa-cloud-upload-alt fa-4x mb-3" style="color: white;"></i>
+                                <h4 class="mb-2 text-white">Drop gambar di sini atau klik untuk upload</h4>
+                                <p class="text-white-50 mb-3">Support: JPG, PNG, WEBP (Max 10MB)</p>
+                                <input type="file" name="file" id="fileInput" accept="image/*" style="display: none;"
+                                    required>
+                                <button type="button" class="btn btn-primary btn-lg"
+                                    onclick="document.getElementById('fileInput').click()">
+                                    <i class="fas fa-folder-open me-2"></i>Pilih File
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                    {% if error %}
+                    <div class="alert alert-danger mt-3">
+                        <i class="fas fa-exclamation-circle me-2"></i>{{ error }}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const uploadForm = document.getElementById('uploadForm');
+
+    // Drag and drop events
+    dropZone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropZone.style.borderColor = 'white';
+        dropZone.style.backgroundColor = 'rgba(255, 255, 255, 0.1)';
+    });
+
+    dropZone.addEventListener('dragleave', (e) => {
+        e.preventDefault();
+        dropZone.style.borderColor = 'rgba(255, 255, 255, 0.5)';
+        dropZone.style.backgroundColor = 'transparent';
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.style.borderColor = 'rgba(255, 255, 255, 0.5)';
+        dropZone.style.backgroundColor = 'transparent';
+        const files = e.dataTransfer.files;
+        if (files.length) {
+            fileInput.files = files;
+            uploadForm.submit();
+        }
+    });
+
+    // File input change
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files.length) {
+            uploadForm.submit();
+        }
+    });
+</script>
+{% endblock %}

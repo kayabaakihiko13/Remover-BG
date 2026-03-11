@@ -1,97 +1,134 @@
-from flask import (Flask, render_template, request, send_file, jsonify, send_from_directory)
-from flask_cors import CORS
-from rembg import remove
-from PIL import Image
 import io
-from pathlib import Path
+import os
 import sys
-from config.directory_project import BASE_DIR,UPLOAD_DIR
+import base64
+from pathlib import Path
 
+from flask import (
+    Flask,
+    render_template,
+    request,
+    jsonify,
+    send_from_directory,
+    send_file
+)
+from flask_cors import CORS
+from PIL import Image
+from rembg import remove, new_session
 
-# Add parent directory to path
+from config.directory_project import UPLOAD_DIR, MODEL_DIR
+
+# ==============================================================================
+# KONFIGURASI APLIKASI
+# ==============================================================================
+
 sys.path.append(str(Path(__file__).parent.parent))
 
-# Initialize Flask app
-app = Flask(__name__,
-            template_folder='templates',
-            static_folder='styles',
-            static_url_path='/static') 
+app = Flask(
+    __name__,
+    template_folder='templates',
+    static_folder='styles',
+    static_url_path='/static'
+)
 CORS(app)
 
-
-# Create directories if not exist
 UPLOAD_DIR.mkdir(exist_ok=True)
+MODEL_DIR.mkdir(exist_ok=True)
 
-# Config
-app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024  # 10MB max
+os.environ["U2NET_HOME"] = str(MODEL_DIR)
+BG_SESSION = new_session("u2netp")
+
+app.config['MAX_CONTENT_LENGTH'] = 10 * 1024 * 1024
 app.config['UPLOAD_FOLDER'] = str(UPLOAD_DIR)
 
-# ============== Routes ==============
+# ==============================================================================
+# ROUTES
+# ==============================================================================
 
 @app.route('/')
 def home():
-    """Home page with upload interface"""
+    """Halaman Beranda"""
     return render_template('index.html')
 
 @app.route('/about')
 def about():
-    """About page"""
+    """Halaman Tentang"""
     return render_template('view/about.html')
 
+@app.route("/upload", methods=["GET", "POST"])
+def upload_page():
+    """Halaman Upload & Proses Gambar"""
+    
+    if request.method == 'GET':
+        return render_template('view/upload.html')
+    
+    if request.method == 'POST':
+        file = request.files.get('file')
+        
+        if not file or file.filename == '':
+            return render_template('view/upload.html', error='Tidak ada file yang dipilih.')
+        
+        allowed_types = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
+        if file.content_type not in allowed_types:
+            return render_template('view/upload.html', 
+                                 error=f'Tipe file tidak didukung ({file.content_type}). Gunakan JPG, PNG, atau WEBP.')
+        
+        try:
+            img_bytes = file.read()
+            input_image = Image.open(io.BytesIO(img_bytes))
+            original_filename = file.filename
+            
+            if original_filename.lower().endswith(('.jpg', '.jpeg')):
+                if input_image.mode in ('RGBA', 'P', 'LA'):
+                    input_image = input_image.convert('RGB')
+                input_image.save(UPLOAD_DIR / original_filename, 'JPEG', quality=95)
+            else:
+                input_image.save(UPLOAD_DIR / original_filename)
+            
+            input_image_rgba = input_image.convert('RGBA')
+            output_image = remove(input_image_rgba, session=BG_SESSION)
+            
+            buffered = io.BytesIO()
+            output_image.save(buffered, format="PNG")
+            img_base64 = base64.b64encode(buffered.getvalue()).decode('utf-8')
+            processed_data = f"image/png;base64,{img_base64}"
+            
+            original_buffered = io.BytesIO()
+            input_image.save(original_buffered, format="PNG")
+            original_base64 = base64.b64encode(original_buffered.getvalue()).decode('utf-8')
+            original_data = f"image/png;base64,{original_base64}"
+            
+            return render_template('view/upload.html', 
+                                 original_file=original_data,
+                                 processed_file=processed_data,
+                                 success=True)
+        
+        except Exception as e:
+            print(f"ERROR: {str(e)}")
+            return render_template('view/upload.html', error=f'Gagal memproses gambar: {str(e)}')
 
-@app.route('/remove-bg', methods=['POST'])
-def remove_background():
-    """
-    Remove background from uploaded image
-    """
-    if 'file' not in request.files:
-        return jsonify({'error': 'No file provided'}), 400
-    
-    file = request.files['file']
-    
-    if file.filename == '':
-        return jsonify({'error': 'No file selected'}), 400
-    
-    # Validate file type
-    allowed_types = ['image/jpeg', 'image/jpg', 'image/png', 'image/webp']
-    if file.content_type not in allowed_types:
-        return jsonify({'error': 'Invalid file type. Allowed: JPG, PNG, WEBP'}), 400
-    
-    try:
-        # Read and process image
-        image_data = file.read()
-        input_image = Image.open(io.BytesIO(image_data))
-        output_image = remove(input_image)
-        
-        # Save to bytes
-        img_byte_arr = io.BytesIO()
-        output_image.save(img_byte_arr, format='PNG')
-        img_byte_arr.seek(0)
-        
-        return send_file(
-            img_byte_arr,
-            mimetype='image/png',
-            as_attachment=True,
-            download_name=f'no-bg-{file.filename}'
-        )
-    
-    except Exception as e:
-        return jsonify({'error': f'Processing error: {str(e)}'}), 500
+@app.route("/uploads/<filename>")
+def uploaded_file(filename: str):
+    """Route untuk mengakses file yang sudah diupload"""
+    return send_from_directory(UPLOAD_DIR, filename)
 
 @app.route('/health')
 def health_check():
-    """Health check endpoint"""
+    """Endpoint untuk cek kesehatan server"""
     return jsonify({'status': 'healthy', 'service': 'remover-bg'})
 
 @app.route('/public/<path:filename>')
 def serve_static(filename):
-    """Serve static files"""
+    """Serve file statis dari folder styles"""
     return send_from_directory(app.static_folder, filename)
 
-# Error handlers
+# ==============================================================================
+# ERROR HANDLERS
+# ==============================================================================
+
 @app.errorhandler(404)
 def not_found(error):
-    return jsonify({'error': 'Not found'}), 404
+    return jsonify({'error': 'Resource not found'}), 404
 
 @app.errorhandler(500)
 def internal_error(error):
@@ -99,7 +136,11 @@ def internal_error(error):
 
 @app.errorhandler(413)
 def too_large(error):
-    return jsonify({'error': 'File too large. Maximum size: 10MB'}), 413
+    return jsonify({'error': 'File terlalu besar. Maksimal 10MB'}), 413
+
+# ==============================================================================
+# MAIN EXECUTION
+# ==============================================================================
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, debug=True)

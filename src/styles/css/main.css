@@ -69,18 +69,17 @@ main {
 /* Drop zone styles */
 .drop-zone {
     border: 3px dashed rgba(255, 255, 255, 0.5);
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.1));
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(139, 92, 246, 0.1));
     cursor: pointer;
     transition: all 0.3s;
-    border-radius: 1rem;
 }
 
 .drop-zone:hover {
     border-color: white;
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.15));
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(139, 92, 246, 0.2));
     transform: scale(1.02);
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
 }
+
 
 .drop-zone i {
     color: white;
