@@ -41,12 +41,12 @@
 
         <!-- Tombol Download & Upload Ulang -->
         <div class="text-center mt-4 d-flex gap-3 justify-content-center flex-wrap">
-            <a href="{{ url_for('download_result') }}" class="btn btn-success btn-lg">
+            <a href="{{ url_for('download.download_result') }}" class="btn btn-success btn-lg">
                 <i class="fas fa-download me-2"></i>Download Hasil
             </a>
 
             <!-- ✅ GANTI DARI 'upload' MENJADI 'upload_page' -->
-            <a href="{{ url_for('upload_page') }}" class="btn btn-outline-light btn-lg">
+            <a href="{{ url_for('upload.upload_page') }}" class="btn btn-outline-light btn-lg">
                 <i class="fas fa-redo me-2"></i>Upload Ulang
             </a>
         </div>
