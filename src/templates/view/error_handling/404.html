@@ -1,0 +1,65 @@
+{% extends 'view/base.html' %}
+
+{% block title %}404 - Halaman Tidak Ditemukan{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8 text-center">
+            <!-- Error Icon -->
+            <div class="mb-4">
+                <i class="fas fa-exclamation-triangle text-warning"
+                    style="font-size: 8rem; opacity: 0.8; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.3));">
+                </i>
+            </div>
+
+            <!-- Error Code -->
+            <h1 class="display-1 fw-bold text-white mb-3"
+                style="font-size: 8rem; font-weight: 900; text-shadow: 4px 4px 8px rgba(0,0,0,0.3);">
+                404
+            </h1>
+
+            <h2 class="h3 text-white mb-4">Oops! Halaman Tidak Ditemukan</h2>
+
+            <!-- Error Message -->
+            <p class="lead text-white-50 mb-5">
+                Maaf, halaman yang kamu cari tidak dapat ditemukan di server kami.
+            </p>
+
+            <!-- Action Buttons -->
+            <div class="d-grid gap-2 d-md-flex justify-content-md-center mb-5">
+                <a href="{{ url_for('home') }}" class="btn btn-primary btn-lg px-5">
+                    <i class="fas fa-home me-2"></i>Kembali ke Beranda
+                </a>
+                <button onclick="history.back()" class="btn btn-outline-light btn-lg px-4">
+                    <i class="fas fa-arrow-left me-2"></i>Kembali
+                </button>
+            </div>
+
+            <!-- Additional Info -->
+            <div class="text-white-50 small mt-4">
+                <p class="mb-0">
+                    <i class="fas fa-info-circle me-2"></i>
+                    Jika masalah terus berlanjut, silakan hubungi support kami.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .display-1 {
+        font-size: 8rem;
+        font-weight: 900;
+        text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    code {
+        font-family: 'Courier New', monospace;
+        color: #ffc107;
+        background-color: rgba(0, 0, 0, 0.3) !important;
+        padding: 0.2em 0.6em;
+        border-radius: 5px;
+    }
+</style>
+{% endblock %}

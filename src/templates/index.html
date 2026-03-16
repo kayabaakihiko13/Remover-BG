@@ -1,0 +1,98 @@
+{% extends 'view/base.html' %}
+
+{% block title %}Remover-BG - Hapus Background Otomatis{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <!-- Hero Section -->
+    <div class="row justify-content-center mb-5">
+        <div class="col-lg-8 text-center text-white">
+            <h1 class="display-4 fw-bold mb-4">
+                <i class="fas fa-wand-magic-sparkles me-2"></i>
+                Hapus Background Otomatis
+            </h1>
+            <p class="lead mb-4">
+                Upload gambar Anda dan biarkan AI kami menghapus background dengan sempurna dalam hitungan detik. Gratis
+                dan mudah digunakan!
+            </p>
+        </div>
+    </div>
+
+    <!-- Upload Section dengan FORM -->
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card border-0 shadow-lg" style="border-radius: 20px;">
+                <div class="card-body p-5">
+                    <form action="/upload" method="POST" enctype="multipart/form-data" id="uploadForm">
+                        <div class="text-center mb-4">
+                            <div id="dropZone" class="drop-zone rounded-4 p-5">
+                                <i class="fas fa-cloud-upload-alt fa-4x mb-3" style="color: white;"></i>
+                                <h4 class="mb-2 text-white">Drop gambar di sini atau klik untuk upload</h4>
+                                <p class="text-white-50 mb-3">Support: JPG, PNG, WEBP (Max 10MB)</p>
+                                <input type="file" name="file" id="fileInput" accept="image/*" style="display: none;">
+                                <button type="button" class="btn btn-primary btn-lg"
+                                    onclick="document.getElementById('fileInput').click()">
+                                    <i class="fas fa-folder-open me-2"></i>Pilih File
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Features -->
+            <div class="row mt-5 g-4">
+                <div class="col-md-4">
+                    <div class="text-center text-white">
+                        <div class="bg-white bg-opacity-25 rounded-circle p-4 d-inline-block mb-3">
+                            <i class="fas fa-bolt fa-3x"></i>
+                        </div>
+                        <h5>Cepat & Otomatis</h5>
+                        <p class="small">Proses hanya dalam hitungan detik dengan teknologi AI canggih</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="text-center text-white">
+                        <div class="bg-white bg-opacity-25 rounded-circle p-4 d-inline-block mb-3">
+                            <i class="fas fa-check-circle fa-3x"></i>
+                        </div>
+                        <h5>Hasil Berkualitas</h5>
+                        <p class="small">Hasil yang presisi dan rapi untuk kebutuhan profesional Anda</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="text-center text-white">
+                        <div class="bg-white bg-opacity-25 rounded-circle p-4 d-inline-block mb-3">
+                            <i class="fas fa-gift fa-3x"></i>
+                        </div>
+                        <h5>100% Gratis</h5>
+                        <p class="small">Gunakan sepuasnya tanpa biaya dan tanpa watermark</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- error alert box -->
+    {% if error %}
+    <div class="row justify-content-center mb-4">
+        <div class="col-lg-8">
+            <div class="alert alert-danger alert-dismissible fade show shadow-lg border-0" role="alert"
+                style="border-radius: 15px; background: linear-gradient(135deg, #ff6b6b 0%, #ee5a5a 100%); color: white;">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-exclamation-circle fa-2x me-3"></i>
+                    <div>
+                        <h5 class="alert-heading mb-1 fw-bold">⚠️ Upload Gagal</h5>
+                        <p class="mb-0">{{ error }}</p>
+                    </div>
+                </div>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="alert"
+                    aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+
+<script src="../styles/js/main.js"></script>
+{% endblock %}
